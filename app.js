@@ -2,40 +2,42 @@ const readline = require('readline-sync');
 
 const tasks = [];
 
-function addTask() {
-  const taskIndicator = readline.question('Indicador de la tarea: ');
-  const taskDescription = readline.question('Descripción de la tarea: ');
-
-  const task = {
-    indicator: taskIndicator,
-    description: taskDescription,
-    completed: false,
-  };
-
-  tasks.push(task);
-  console.log('Tarea añadida correctamente.');
+function addTask(task) {
+  return new Promise((resolve, reject) => {
+    // Simular algún proceso
+    setTimeout(() => {
+      tasks.push(task);
+      resolve('Tarea añadida correctamente.');
+    }, 1000); // Simulando un segundo de espera
+  });
 }
 
-function deleteTask() {
-  const taskIndex = readline.questionInt('Índice de la tarea a eliminar: ');
-
-  if (taskIndex >= 0 && taskIndex < tasks.length) {
-    tasks.splice(taskIndex, 1);
-    console.log('Tarea eliminada correctamente.');
-  } else {
-    console.log('El índice proporcionado no es válido.');
-  }
+function deleteTask(index) {
+  return new Promise((resolve, reject) => {
+    // Simular algún proceso
+    setTimeout(() => {
+      if (index >= 0 && index < tasks.length) {
+        tasks.splice(index, 1);
+        resolve('Tarea eliminada correctamente.');
+      } else {
+        reject('El índice proporcionado no es válido.');
+      }
+    }, 1000);
+  });
 }
 
-function completeTask() {
-  const taskIndex = readline.questionInt('Índice de la tarea completada: ');
-
-  if (taskIndex >= 0 && taskIndex < tasks.length) {
-    tasks[taskIndex].completed = true;
-    console.log('Tarea completada correctamente.');
-  } else {
-    console.log('El índice proporcionado no es válido.');
-  }
+function completeTask(index) {
+  return new Promise((resolve, reject) => {
+    // Simular algún proceso
+    setTimeout(() => {
+      if (index >= 0 && index < tasks.length) {
+        tasks[index].completed = true;
+        resolve('Tarea completada correctamente.');
+      } else {
+        reject('El índice proporcionado no es válido.');
+      }
+    }, 1000);
+  });
 }
 
 function showTasks() {
@@ -46,7 +48,7 @@ function showTasks() {
   console.log();
 }
 
-function main() {
+async function main() {
   let running = true;
   while (running) {
     console.log('Opciones:');
@@ -60,13 +62,30 @@ function main() {
 
     switch (option) {
       case 1:
-        addTask();
+        const taskIndicator = readline.question('Indicador de la tarea: ');
+        const taskDescription = readline.question('Descripción de la tarea: ');
+        try {
+          const result = await addTask({
+            indicator: taskIndicator,
+            description: taskDescription,
+            completed: false,
+          });
+          console.log(result);
+        } catch (error) {
+          console.error(error);
+        }
         break;
       case 2:
-        deleteTask();
+        const deleteIndex = readline.questionInt('Índice de la tarea a eliminar: ');
+        deleteTask(deleteIndex)
+          .then(result => console.log(result))
+          .catch(error => console.error(error));
         break;
       case 3:
-        completeTask();
+        const completeIndex = readline.questionInt('Índice de la tarea completada: ');
+        completeTask(completeIndex)
+          .then(result => console.log(result))
+          .catch(error => console.error(error));
         break;
       case 4:
         showTasks();
